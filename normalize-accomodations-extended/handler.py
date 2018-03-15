@@ -84,20 +84,17 @@ def normalize_accomodations_extended(event, context):
     try:
         split_key = accomodations_extended_key.split('/')
         file_name = split_key[-1]
-        dest_accomodations_extended_key = ''.join([e for e in split_key if ])
+        dest_accomodations_extended_key = accomodations_extended_key.replace('raw', 'norm').replace('.csv', '_normalized.json')
         os.remove('/tmp/' + file_name)
         s3_client.download_file(bucket_name, accomodations_extended_key, '/tmp/' + file_name)
-        write_json(read_csv('/tmp/' + file_name),)
-
+        write_json(read_csv('/tmp/' + file_name), dest_accomodations_extended_key)
     except Exception as e:
         print(e)
-
-    write_json(read_csv(''), '')
 
 
 def read_csv(csv_path):
     return pd.read_csv(
-        csv_path,  # prendere dall'event
+        csv_path,
         header=None,
         names=COLUMNS_NAMES,
         dtypes={k: str for k in COLUMNS_NAMES},
@@ -111,7 +108,4 @@ def read_csv(csv_path):
 def write_json(df, json_path):
     df.to_json(json_path, orient='records', lines=True, force_ascii=False)
 
-
-def get_norm_destination(object_key):
-    pass
 
